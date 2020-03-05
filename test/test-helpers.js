@@ -260,7 +260,16 @@ function seedThingsTables(db, users, things, reviews=[]) {
     await trx.raw(
       `SELECT setval('thingful_things_id_seq', ?)`,
       [things[things.length - 1].id],
-    )
+    );
+    // not sure about the next line
+    if(reviews.length) {
+      await trx.into('thingful_reviews').insert(reviews);
+      // change below to use REVIEWS instead of THINGS
+        // await trx.raw(
+        //   `SELECT setval('thingful_things_id_seq', ?)`,
+        //   [things[things.length - 1].id],
+        // );
+    }
   })
 
 }
