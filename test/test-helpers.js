@@ -256,19 +256,19 @@ function seedThingsTables(db, users, things, reviews=[]) {
   return db.transaction(async trx => {
     await seedUsers(trx, users);
     await trx.into('thingful_things').insert(things);
-
+    // update the auto sequence to match 
     await trx.raw(
       `SELECT setval('thingful_things_id_seq', ?)`,
       [things[things.length - 1].id],
     );
-    // not sure about the next line
+    
     if(reviews.length) {
       await trx.into('thingful_reviews').insert(reviews);
-      // change below to use REVIEWS instead of THINGS
-        // await trx.raw(
-        //   `SELECT setval('thingful_things_id_seq', ?)`,
-        //   [things[things.length - 1].id],
-        // );
+      await trx.raw(
+        `SELECT setval('thingful_reviews_id_seq', ?)`,
+        [reviews[reviews.length - 1].id],
+      );
+        // DO we only need to set the sequence ID when we are doing a transacation? WHy didnt we have to do it before??
     }
   })
 
