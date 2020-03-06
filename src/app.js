@@ -28,6 +28,13 @@ app.use(function errorHandler(error, req, res, next) {
   } else {
     console.error(error);
     response = { error: error.message, object: error };
+    if(error.errno === -4078) {
+      console.log('ERROR: PSQL database not running')
+      response = { 
+        error: error.message,
+        object: error,
+        details: 'PSQL database not running'};
+    }
   }
   res.status(500).json(response);
 });
