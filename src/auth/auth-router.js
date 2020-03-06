@@ -17,18 +17,19 @@ authRouter
         });
       }
     }
-    // console.log(`LINE 20:`, loginUser);
+    console.log(`LINE 20:`, loginUser);
     AuthService.getUserWithUserName(
       req.app.get('db'),
       loginUser.user_name
     )
       .then(dbUser => {
-        // console.log(`LINE 26:`, dbUser);
+        console.log(`LINE 26:`, dbUser);
         if(!dbUser) {
-          // console.log(`LINE 27: this user doesnt exist`);
+          console.log(`LINE 27: this user doesnt exist`);
+          console.log(dbUser);
           return res.status(401).json({ error: 'Invalid credentials' });
         }
-        //console.log('this user DOES exist');
+        console.log('this user DOES exist');
         
         return AuthService.comparePasswords(loginUser.password, dbUser.password)
           .then(compareMatch => {
@@ -38,7 +39,12 @@ authRouter
               });
             }
 
-            res.send('ok');
+            const sub = dbUser.user_name;
+            const payload = { user_id: dbUser.id };
+            res.send({
+              authToken: AuthService.createJwt(sub, payload),
+            });
+            //res.send('ok');
           });
       })
       .catch(next);

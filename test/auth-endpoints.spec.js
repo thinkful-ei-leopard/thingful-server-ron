@@ -1,4 +1,5 @@
 const knex = require('knex');
+const jwt = require('jsonwebtoken');
 const app = require('../src/app');
 const helpers = require('./test-helpers');
 
@@ -23,9 +24,9 @@ describe.only('Auth Endpoints', function() {
 
   afterEach('cleanup', () => helpers.cleanTables(db));
 
-  describe(`POST /api/auth/login`, () => { // technically "login" is a verb which isnt very RESTful, but I was told that authentication endpoints sometimes do this
+  describe.only(`POST /api/auth/login`, () => { // technically "login" is a verb which isnt very RESTful, but I was told that authentication endpoints sometimes do this
     beforeEach(`insert users`, () => {
-      helpers.seedUsers(
+      return helpers.seedUsers(
         db,
         testUsers
       );
@@ -60,11 +61,30 @@ describe.only('Auth Endpoints', function() {
 
     it(`responds 401 'invalid user_name or password' when bad password`, () => {
       const loginBody = { user_name: testUser.user_name, password: 'incorrect'};
-      // console.log(`LINE 63 .SPEC:`, loginBody);
+      console.log(loginBody);
       return supertest(app)
         .post('/api/auth/login')
         .send(loginBody)
         .expect(401, { error: 'Incorrect user_name or password'});
+    });
+
+    it('responds 200 and JWT auth token using secret when valid credentials', () => {
+      const loginBody = { user_name: testUser.user_name, password: testUser.password };
+      const expectedToken = jwt.sign(
+        { user_id: testUser.id }, // payload
+        process.env.JWT_SECRET,   // secret
+        {
+          subject: testUser.user_name,
+          algorithm: 'HS256',
+        }
+      );
+
+      return supertest(app)
+        .post('/api/auth/login')
+        .send(loginBody)
+        .expect(200, {
+          authToken: expectedToken,
+        });
     });
 
   });
