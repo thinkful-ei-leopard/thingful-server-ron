@@ -29,7 +29,7 @@ app.use(function errorHandler(error, req, res, next) {
     console.error(error);
     response = { error: error.message, object: error };
     if(error.errno === -4078) {
-      console.log('ERROR: PSQL database not running')
+      console.log('ERROR: PSQL database not running');
       response = { 
         error: error.message,
         object: error,
