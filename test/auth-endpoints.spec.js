@@ -32,7 +32,6 @@ describe.only('Auth Endpoints', function() {
     });
 
     const requiredFields = ['user_name', 'password'];
-
     requiredFields.forEach(field => {
       const loginAttemptBody = {
         user_name: testUser.user_name,
@@ -49,7 +48,23 @@ describe.only('Auth Endpoints', function() {
             error: `Missing '${field}' in request body`,
           });
       });
+    });
 
+    it(`responds 401 'invalid user_name or password' when bad user_name`, () => {
+      const loginBody = { user_name: 'user-not', password: 'existy' };
+      return supertest(app)
+        .post('/api/auth/login')
+        .send(loginBody)
+        .expect(401, { error: 'Invalid credentials' });
+    });
+
+    it(`responds 401 'invalid user_name or password' when bad password`, () => {
+      const loginBody = { user_name: testUser.user_name, password: 'incorrect'};
+      // console.log(`LINE 63 .SPEC:`, loginBody);
+      return supertest(app)
+        .post('/api/auth/login')
+        .send(loginBody)
+        .expect(401, { error: 'Incorrect user_name or password'});
     });
 
   });
