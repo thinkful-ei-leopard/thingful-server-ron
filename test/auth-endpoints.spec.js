@@ -24,7 +24,7 @@ describe.only('Auth Endpoints', function() {
 
   afterEach('cleanup', () => helpers.cleanTables(db));
 
-  describe.only(`POST /api/auth/login`, () => { // technically "login" is a verb which isnt very RESTful, but I was told that authentication endpoints sometimes do this
+  describe(`POST /api/auth/login`, () => { // technically "login" is a verb which isnt very RESTful, but I was told that authentication endpoints sometimes do this
     beforeEach(`insert users`, () => {
       return helpers.seedUsers(
         db,
@@ -61,7 +61,7 @@ describe.only('Auth Endpoints', function() {
 
     it(`responds 401 'invalid user_name or password' when bad password`, () => {
       const loginBody = { user_name: testUser.user_name, password: 'incorrect'};
-      console.log(loginBody);
+      //console.log(loginBody);
       return supertest(app)
         .post('/api/auth/login')
         .send(loginBody)
