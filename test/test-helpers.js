@@ -261,14 +261,13 @@ function seedThingsTables(db, users, things, reviews=[]) {
       `SELECT setval('thingful_things_id_seq', ?)`,
       [things[things.length - 1].id],
     );
-    
+
     if(reviews.length) {
       await trx.into('thingful_reviews').insert(reviews);
       await trx.raw(
         `SELECT setval('thingful_reviews_id_seq', ?)`,
         [reviews[reviews.length - 1].id],
       );
-        // DO we only need to set the sequence ID when we are doing a transacation? WHy didnt we have to do it before??
     }
   })
 
