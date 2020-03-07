@@ -25,7 +25,7 @@ describe('Things Endpoints', function() {
 
   afterEach('cleanup', () => helpers.cleanTables(db))
 
-  describe(`Protected endpoint`, () => {
+  describe.only(`Protected endpoints`, () => {
     beforeEach('insert things', () => {
       return helpers.seedThingsTables(
         db,
@@ -53,14 +53,14 @@ describe('Things Endpoints', function() {
             .get(endpoint.path)
             .expect(401, { error: `Missing basic token` })
         })
-        it(`responds 401 'Unauthorized request' when no credentials in token`, () => {
+        it.skip(`responds 401 'Unauthorized request' when no credentials in token`, () => {
           const userNoCreds = { user_name: '', password: '' }
           return supertest(app)
             .get(endpoint.path)
             .set('Authorization', helpers.makeAuthHeader(userNoCreds))
             .expect(401, { error: `Unauthorized request` })
         })
-        it(`responds 401 'Unauthorized request' when invalid user`, () => {
+        it.skip(`responds 401 'Unauthorized request' when invalid user`, () => {
           const userInvalidCreds = { user_name: 'user-not', password: 'existy' }
           return supertest(app)
             .get(endpoint.path)
@@ -68,7 +68,7 @@ describe('Things Endpoints', function() {
             .expect(401, { error: `Unauthorized request` })
         })
   
-        it(`responds 401 'Unauthorized request' when invalid password`, () => {
+        it.skip(`responds 401 'Unauthorized request' when invalid password`, () => {
           const userInvalidPass = { user_name: testUsers[0].user_name, password: 'wrong' }
           return supertest(app)
             .get(endpoint.path)
@@ -79,8 +79,6 @@ describe('Things Endpoints', function() {
     })
 
   })
-
-
 
   describe(`GET /api/things`, () => {
     context(`Given no things`, () => {
