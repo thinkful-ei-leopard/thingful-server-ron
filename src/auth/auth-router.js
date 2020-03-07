@@ -6,7 +6,7 @@ const jsonParser = express.json();
 
 authRouter
   .route('/login')
-  .post(jsonParser, (req, res, next) => {  // WHY unexpected token??
+  .post(jsonParser, (req, res, next) => {  
     const { user_name, password } = req.body;
     const loginUser =  { user_name, password };
 
@@ -17,19 +17,16 @@ authRouter
         });
       }
     }
-    //console.log(`LINE 20:`, loginUser);
+
     AuthService.getUserWithUserName(
       req.app.get('db'),
       loginUser.user_name
     )
       .then(dbUser => {
-        //console.log(`LINE 26:`, dbUser);
         if(!dbUser) {
-          //console.log(`LINE 27: this user doesnt exist`);
-          //console.log(dbUser);
           return res.status(401).json({ error: 'Invalid credentials' });
         }
-        //console.log('this user DOES exist');
+
         
         return AuthService.comparePasswords(loginUser.password, dbUser.password)
           .then(compareMatch => {
@@ -42,7 +39,7 @@ authRouter
             const sub = dbUser.user_name;
             const payload = { user_id: dbUser.id };
             res.send({
-              authToken: AuthService.createJwt(sub, payload),
+              authToken: AuthService.createJwt(sub, payload)
             });
           });
       })
