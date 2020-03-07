@@ -12,10 +12,23 @@ function requireAuth(req, res, next) {
   }
 
   try {
-    // this will try to verify the JWT token, if it doesn't verify this code will error and
-    // the try block will skip to the catch(err) block
-    AuthService.verifyJwt(bearerToken);
-    next();
+    const payload = AuthService.verifyJwt(bearerToken);
+
+    AuthService.getUserWithUserName(
+      req.app.get('db'),
+      payload.sub
+    )
+      .then(user => {
+        if(!user) {
+          return res.status(401).json({ error: 'Unauthorized request' });
+        }
+        req.user = user;
+        next();
+      })
+      .catch(err => {
+        console.log(err);
+        next(err);
+      });
   } catch(err) {
     res.status(401).json({ error: 'Unauthorized request' });
   }
