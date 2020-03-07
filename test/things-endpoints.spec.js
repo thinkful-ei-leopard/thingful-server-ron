@@ -25,7 +25,7 @@ describe('Things Endpoints', function() {
 
   afterEach('cleanup', () => helpers.cleanTables(db))
 
-  describe.only(`Protected endpoints`, () => {
+  describe(`Protected endpoints`, () => {
     beforeEach('insert things', () => {
       return helpers.seedThingsTables(
         db,
