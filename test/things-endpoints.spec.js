@@ -54,25 +54,18 @@ describe('Things Endpoints', function() {
             .expect(401, { error: `Missing bearer token` })
         })
         it(`responds 401 'Unauthorized request' when no credentials in token`, () => {
-          const userNoCreds = { user_name: '', password: '' }
+          const validUser = testUsers[0];
+          const invalidSecret = 'bad-secret';
           return supertest(app)
             .get(endpoint.path)
-            .set('Authorization', helpers.makeAuthHeader(userNoCreds))
+            .set('Authorization', helpers.makeAuthHeader(validUser, invalidSecret))
             .expect(401, { error: `Unauthorized request` })
         })
-        it(`responds 401 'Unauthorized request' when invalid user`, () => {
-          const userInvalidCreds = { user_name: 'user-not', password: 'existy' }
+        it(`responds 401 'Unauthorized request' when invalid sub in payload`, () => {
+          const invalidUser = { user_name: 'user-not-existy', id: 1 }
           return supertest(app)
             .get(endpoint.path)
-            .set('Authorization', helpers.makeAuthHeader(userInvalidCreds))
-            .expect(401, { error: `Unauthorized request` })
-        })
-  
-        it(`responds 401 'Unauthorized request' when invalid password`, () => {
-          const userInvalidPass = { user_name: testUsers[0].user_name, password: 'wrong' }
-          return supertest(app)
-            .get(endpoint.path)
-            .set('Authorization', helpers.makeAuthHeader(userInvalidPass))
+            .set('Authorization', helpers.makeAuthHeader(invalidUser))
             .expect(401, { error: `Unauthorized request` })
         })
       })
